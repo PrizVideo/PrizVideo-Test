@@ -56,14 +56,7 @@ document.addEventListener("DOMContentLoaded", function () {
     },
   });
 
-  const historyButton = createElement("button", {
-    innerHTML: "History",
-    onclick: function () {
-      showHistory();
-    },
-  });
-
-  topBar.append(logo, searchInput, searchButton, liveTVButton, optionsButton, historyButton);
+  topBar.append(logo, searchInput, searchButton, liveTVButton, optionsButton);
 
   const infoArea = createElement("div", { className: "info-area" });
 
@@ -119,17 +112,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
       darkModeToggleLabel.appendChild(darkModeSwitch);
 
-      const accountButton = createElement("button", {
-        innerHTML: "Account Page",
-        onclick: function () {
-          // Navigate to account page
-        },
-      });
-
       const historyButton = createElement("button", {
         innerHTML: "History Page",
         onclick: function () {
           showHistory();
+        },
+      });
+
+      const accountButton = createElement("button", {
+        innerHTML: "Account Page",
+        onclick: function () {
+          // Navigate to account page
         },
       });
 
@@ -147,7 +140,7 @@ document.addEventListener("DOMContentLoaded", function () {
         },
       });
 
-      optionsContent.append(optionsPanelText, darkModeToggleLabel, accountButton, historyButton, librariesButton, exitButton);
+      optionsContent.append(optionsPanelText, darkModeToggleLabel, historyButton, accountButton, librariesButton, exitButton);
       optionsMenu.appendChild(optionsContent);
       document.body.appendChild(optionsMenu);
     }
@@ -178,7 +171,6 @@ document.addEventListener("DOMContentLoaded", function () {
         `,
       });
 
-      // Retrieve previously watched videos from local storage
       const watchedVideos = JSON.parse(localStorage.getItem("watchedVideos")) || [];
 
       if (watchedVideos.length === 0) {
