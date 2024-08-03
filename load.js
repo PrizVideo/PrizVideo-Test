@@ -38,8 +38,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const saveIcon = createSVGIcon('M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z');
 
   const sidebar = createElement('div', { className: 'w-16 bg-black flex flex-col items-center py-4 fixed h-full' }, [
-    createElement('button', { className: 'text-primary mb-8' }, [homeIcon]),
-    createElement('button', { className: 'text-gray-400 mb-8' }, [videoIcon])
+    createElement('sl-button', { variant: 'text', size: 'large', className: 'text-primary mb-8' }, [homeIcon]),
+    createElement('sl-button', { variant: 'text', size: 'large', className: 'text-gray-400 mb-8' }, [videoIcon])
   ]);
 
   const header = createElement('header', { className: 'bg-gray-800 text-white p-4 flex justify-between items-center ml-16' }, [
@@ -76,14 +76,14 @@ document.addEventListener('DOMContentLoaded', () => {
     videoGrid.innerHTML = '';
 
     for (let i = 0; i < 8; i++) {
-      const skeleton = createElement('sl-skeleton-loader', { effect: 'sheen', className: 'w-full h-60' });
+      const skeleton = createElement('sl-skeleton', { effect: 'sheen', className: 'w-full h-60' });
       videoGrid.appendChild(skeleton);
     }
 
     setTimeout(() => {
       const videos = [
-        { id: 1, title: 'Video 1', thumbnail: 'https://placehold.co/320x180' },
-        { id: 2, title: 'Video 2', thumbnail: 'https://placehold.co/320x180' },
+        { id: 1, title: 'First Person to Crush Their Balls With a Rock Gets 1B Dollars!', thumbnail: 'https://placehold.co/320x180' },
+        { id: 2, title: 'The Journey to Making PrizVideo', thumbnail: 'https://placehold.co/320x180' },
       ];
 
       videoGrid.innerHTML = '';
