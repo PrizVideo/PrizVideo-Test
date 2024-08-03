@@ -1,210 +1,134 @@
+'use strict';
+
 document.addEventListener("DOMContentLoaded", function () {
-  function createElement(tag, attributes = {}) {
+  const state = {
+    isDarkMode: localStorage.getItem("darkMode") === "on",
+    currentUser: null,
+    videos: []
+  };
+
+  function createElement(tag, attributes = {}, children = []) {
     const element = document.createElement(tag);
     for (const key in attributes) {
-      element[key] = attributes[key];
+      if (key.startsWith('on') && typeof attributes[key] === 'function') {
+        element.addEventListener(key.slice(2).toLowerCase(), attributes[key]);
+      } else {
+        element[key] = attributes[key];
+      }
     }
+    children.forEach(child => element.appendChild(child));
     return element;
   }
 
-  let isDarkMode = true;
-
   function toggleDarkMode() {
-    isDarkMode = !isDarkMode;
-
-    document.body.classList.toggle('dark-mode', isDarkMode);
-    updateOptionsMenu();
-
-    localStorage.setItem("darkMode", isDarkMode ? "on" : "off");
+    state.isDarkMode = !state.isDarkMode;
+    updateTheme();
+    localStorage.setItem("darkMode", state.isDarkMode ? "on" : "off");
   }
 
-  const savedDarkMode = localStorage.getItem("darkMode");
-  if (savedDarkMode) {
-    isDarkMode = savedDarkMode === "on";
-    toggleDarkMode();
+  function updateTheme() {
+    document.body.style.backgroundColor = state.isDarkMode ? "#1a1a1a" : "#ffffff";
+    document.body.style.color = state.isDarkMode ? "#ffffff" : "#000000";
   }
 
-  const topBar = createElement("div", { className: "top-bar" });
+  function createTopBar() {
+    const searchInput = createElement("input", { type: "search", placeholder: "Search videos" });
+    const searchButton = createElement("button", { innerHTML: "Search", onclick: searchVideos });
+    const uploadButton = createElement("button", { innerHTML: "Upload", onclick: showUploadModal });
+    const optionsButton = createElement("button", { innerHTML: "Options", onclick: showOptions });
 
-  const logo = createElement("div", { className: "logo" });
-  const logoLink = createElement("a", {
-    href: "https://prizvideo.github.io/PrizVideo-Main/",
-    innerHTML: "<b>PrizVideo Beta</b>",
-  });
-  logo.appendChild(logoLink);
+    return createElement("div", { className: "top-bar" }, [
+      createElement("div", { className: "logo" }, [
+        createElement("a", { href: "#", innerHTML: "<b>PrizVideo Beta</b>" })
+      ]),
+      searchInput,
+      searchButton,
+      uploadButton,
+      optionsButton
+    ]);
+  }
 
-  const searchInput = createElement("input", {
-    type: "search",
-    placeholder: "Search",
-  });
+  function createMainContent() {
+    return createElement("main", { id: "main-content" }, [
+      createElement("h2", { innerHTML: "Featured Videos" }),
+      createElement("div", { id: "video-grid", className: "video-grid" })
+    ]);
+  }
 
-  const searchButton = createElement("button", {
-    innerHTML: "Search",
-    onclick: function () {
-      searchresults();
-    },
-  });
-
-  const liveTVButton = createElement("button", {
-    innerHTML: "Live TV",
-  });
-
-  const optionsButton = createElement("button", {
-    innerHTML: "Options",
-    onclick: function () {
-      showOptions();
-    },
-  });
-
-  topBar.append(logo, searchInput, searchButton, liveTVButton, optionsButton);
-
-  const infoArea = createElement("div", { className: "info-area" });
-
-  const infoTextBox = createElement("div", {
-    className: "info-text-box",
-  });
-
-  const infoText = createElement("p", {
-    innerHTML:
-      "Hello! This is still in a testing phase, and it is impossible to create an account, nor upload. However, you can enjoy the work we are putting into it by exploring the site. Goodbye!",
-    style: "text-align: center;",
-  });
-
-  infoTextBox.appendChild(infoText);
-
-  const footer = createElement("footer", {
-    innerHTML: "<hr><p>© Copyright PrizVideo 2024</p>",
-  });
-
-  infoArea.append(footer, infoTextBox);
-
-  document.body.append(topBar, infoArea);
+  function createFooter() {
+    return createElement("footer", {}, [
+      createElement("p", { innerHTML: "© Copyright PrizVideo 2024" })
+    ]);
+  }
 
   function showOptions() {
-    let optionsMenu = document.querySelector(".options-menu");
-    if (!optionsMenu) {
-      optionsMenu = createElement("div", {
-        className: "options-menu",
-      });
-
-      const optionsContent = createElement("div", {
-        className: "options-content",
-      });
-
-      const optionsPanelText = createElement("h2", {
-        innerHTML: "Options Panel",
-        style: "margin-bottom: 20px;",
-      });
-
-      const darkModeToggleLabel = createElement("label", {
-        innerHTML: "Dark Mode",
-        style: "margin-bottom: 10px; display: block;",
-      });
-
-      const darkModeSwitch = createElement("input", {
-        type: "checkbox",
-        id: "darkModeSwitch",
-        checked: isDarkMode,
-        onchange: function () {
-          toggleDarkMode();
-        },
-      });
-
-      darkModeToggleLabel.appendChild(darkModeSwitch);
-
-      const historyButton = createElement("button", {
-        innerHTML: "History Page",
-        onclick: function () {
-          showHistory();
-        },
-      });
-
-      const accountButton = createElement("button", {
-        innerHTML: "Account Page",
-        onclick: function () {
-          // Navigate to account page
-        },
-      });
-
-      const librariesButton = createElement("button", {
-        innerHTML: "Libraries Page",
-        onclick: function () {
-          // Navigate to libraries page
-        },
-      });
-
-      const exitButton = createElement("button", {
-        innerHTML: "Exit",
-        onclick: function () {
-          document.body.removeChild(optionsMenu);
-        },
-      });
-
-      optionsContent.append(optionsPanelText, darkModeToggleLabel, historyButton, accountButton, librariesButton, exitButton);
-      optionsMenu.appendChild(optionsContent);
-      document.body.appendChild(optionsMenu);
-    }
+    const optionsMenu = createElement("div", { className: "modal" }, [
+      createElement("div", { className: "modal-content" }, [
+        createElement("h2", { innerHTML: "Options" }),
+        createElement("label", {}, [
+          createElement("input", { type: "checkbox", checked: state.isDarkMode, onchange: toggleDarkMode }),
+          document.createTextNode(" Dark Mode")
+        ]),
+        createElement("button", { innerHTML: "Close", onclick: () => optionsMenu.remove() })
+      ])
+    ]);
+    document.body.appendChild(optionsMenu);
   }
 
-  function showHistory() {
-    let historyPopup = document.querySelector(".history-popup");
-    if (!historyPopup) {
-      historyPopup = createElement("div", {
-        className: "history-popup",
-      });
-
-      const historyContent = createElement("div", {
-        className: "history-content",
-        style: `
-          position: fixed;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          width: 90%;
-          height: 90%;
-          background: ${isDarkMode ? "#1a1a1a" : "white"};
-          padding: 20px;
-          border-radius: 10px;
-          color: ${isDarkMode ? "#ffffff" : "#000000"};
-          transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
-          overflow-y: auto;
-        `,
-      });
-
-      const watchedVideos = JSON.parse(localStorage.getItem("watchedVideos")) || [];
-
-      if (watchedVideos.length === 0) {
-        const noHistoryText = createElement("p", {
-          innerHTML: "No videos watched yet.",
-          style: "text-align: center;",
-        });
-        historyContent.appendChild(noHistoryText);
-      } else {
-        const historyList = createElement("ul");
-        watchedVideos.forEach(video => {
-          const listItem = createElement("li", { innerHTML: video });
-          historyList.appendChild(listItem);
-        });
-        historyContent.appendChild(historyList);
-      }
-
-      const closeButton = createElement("button", {
-        innerHTML: "Close",
-        onclick: function () {
-          document.body.removeChild(historyPopup);
-        },
-      });
-
-      historyPopup.appendChild(historyContent);
-      historyPopup.appendChild(closeButton);
-      document.body.appendChild(historyPopup);
-    }
+  function showUploadModal() {
+    const uploadModal = createElement("div", { className: "modal" }, [
+      createElement("div", { className: "modal-content" }, [
+        createElement("h2", { innerHTML: "Upload Video" }),
+        createElement("input", { type: "file", accept: "video/*" }),
+        createElement("input", { type: "text", placeholder: "Video Title" }),
+        createElement("textarea", { placeholder: "Video Description" }),
+        createElement("button", { innerHTML: "Upload", onclick: uploadVideo }),
+        createElement("button", { innerHTML: "Cancel", onclick: () => uploadModal.remove() })
+      ])
+    ]);
+    document.body.appendChild(uploadModal);
   }
 
-  function updateOptionsMenu() {
-    const darkModeSwitch = document.querySelector("#darkModeSwitch");
-    if (darkModeSwitch) {
-      darkModeSwitch.checked = isDarkMode;
-    }
+  function uploadVideo() {
+    console.log("Upload Complete. Updating PrizVideo and video grid...");
+    updateVideoGrid();
   }
+
+  function searchVideos() {
+    console.log("Searching query...");
+    updateVideoGrid();
+  }
+
+  function updateVideoGrid() {
+    const videoGrid = document.getElementById("video-grid");
+    videoGrid.innerHTML = "";
+
+    const mockVideos = [
+      { id: 1, title: "First Person to Crush Their Balls With a Rock Gets 1B Dollars!!1!11!", thumbnail: "content/testthumb.png" },
+      { id: 2, title: "The Journey to Making PrizVideo", thumbnail: "content/testthumb2.png" },
+    ];
+
+    mockVideos.forEach(video => {
+      const videoElement = createElement("div", { className: "video-item" }, [
+        createElement("img", { src: video.thumbnail, alt: video.title }),
+        createElement("h3", { innerHTML: video.title }),
+        createElement("button", { innerHTML: "Play", onclick: () => playVideo(video.id) })
+      ]);
+      videoGrid.appendChild(videoElement);
+    });
+  }
+
+  function playVideo(videoId) {
+    console.log(`Playing video with ID: ${videoId}`);
+  }
+
+  function initApp() {
+    document.body.appendChild(createTopBar());
+    document.body.appendChild(createMainContent());
+    document.body.appendChild(createFooter());
+    updateTheme();
+    updateVideoGrid();
+  }
+
+  initApp();
 });
