@@ -16,7 +16,7 @@ This repository serves as a sandbox environment to:
 
  - **../watch**: Soon to include the code for the watch page.
 
- - **Root files**: Files that are in the root directory. This includes the homepage, the license, and the core JavaScript file.
+ - **Root files**: Files that are in the root directory. This includes the homepage, the license, and the core JavaScript code.
 
 ## Usage
 
