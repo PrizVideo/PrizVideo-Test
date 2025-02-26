@@ -28,12 +28,12 @@
         }, [o("sl-button", {
             variant: "text",
             size: "large",
-            className: "text-blue-400 mb-8",
+            className: "text-gray-400 mb-8",
             title: "Home"
         }, [n("M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z")]), o("sl-button", {
             variant: "text",
             size: "large",
-            className: "text-gray-400 mb-8",
+            className: "text-blue-400 mb-8",
             title: "Videos"
         }, [n("M2 6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zM14.553 7.106A1 1 0 0014 8v4a1 1 0 00.553.894l2 1A1 1 0 0018 13V7a1 1 0 00-1.447-.894l-2 1z")])]),
         r = o("header", {
