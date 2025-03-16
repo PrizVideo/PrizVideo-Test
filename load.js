@@ -220,7 +220,7 @@
             className: "flex-1 overflow-y-auto bg-gradient-to-b from-blue-900 to-gray-900 p-4 ml-16"
         }, [o("h2", {
             className: "text-white text-xl font-semibold mb-4"
-        }, [document.createTextNode("Welcome to PrizVideo!")]), o("div", {
+        }, [document.createTextNode("Welcome to PrizVideo! :D")]), o("div", {
             id: "video-grid",
             className: "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
         })]);
